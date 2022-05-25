@@ -15,7 +15,7 @@
 #include "curling.cpp"
 
 int main() {
-    system("pkexec sh -c 'sysctl -w abi.vsyscall32=0' > /dev/null");
+    (argc != 1 && static_cast<std::string>(argv[1]) == "--nopkexec") ? : system("pkexec sh -c 'sysctl -w abi.vsyscall32=0' > /dev/null");
     std::cout << "STARTED LEAGUEAUTOACCEPT" << std::endl;
 //    std::cout << std::unitbuf;
     while (true) {
