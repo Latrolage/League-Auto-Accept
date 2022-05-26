@@ -10,7 +10,9 @@ struct leagueDBfind {
     sqlite3 *database;
 
     leagueDBfind() { // constructor tries to find the location of the lutris database with the XDG_DATA_HOME environmental variable. If it doesn't, it gets set to ~/.local/share/lutris/pga.db
-        XDG_DATA_HOME = std::getenv("XDG_DATA_HOME");
+        char* env = std::getenv("XDG_DATA_HOME");
+        XDG_DATA_HOME = env ? env : "";
+
         databaselocation = XDG_DATA_HOME.empty() ? "" : XDG_DATA_HOME+"/lutris/pga.db";
         if (XDG_DATA_HOME.empty()) {
             std::cout << "Environmental var: XDG_DATA_HOME doesn't exist. defaulting to ~/.local/share\n";
