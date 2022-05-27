@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <thread>
+#include <chrono>
 
 struct leagueDBfind {
     std::string installlocation, XDG_DATA_HOME, databaselocation, lockfile="0";
@@ -53,10 +55,10 @@ std::ifstream getfile() { //Get credentials from lockfile
     std::ifstream lockfile(database.lockfile);
     std::cout << "lockfile location: " << database.lockfile << std::endl;
 #endif
-    if (!lockfile.is_open()) { // if it didn't get anything, something went wrong
-        std::cout << "League isn't open yet or something else went wrong" << std::endl;
-        //        MessageBox(NULL,"League isn't open yet?", "Error!", MB_OK); winblows?
-        exit(1);
+    while (!lockfile.is_open()) { // if it didn't get anything, something went wrong. Retry until process is killed
+        std::cout << "League isn't open yet or something else went wrong. Retrying..." << std::endl;
+        lockfile.open(database.lockfile);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
     return lockfile;
 }
