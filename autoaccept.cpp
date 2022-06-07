@@ -6,7 +6,7 @@
 #include "curling.cpp"
 
 int main(int argc, char** argv) {
-    if (argc != 1 && static_cast<std::string>(argv[1]) == "--nopkexec") system("pkexec sh -c 'sysctl -w abi.vsyscall32=0' > /dev/null");
+    if (argc != 1 && static_cast<std::string>(argv[1]) != "--nopkexec") system("pkexec sh -c 'sysctl -w abi.vsyscall32=0' > /dev/null");
     std::cout << "STARTED LEAGUEAUTOACCEPT" << std::endl;
     while (true) {
         std::ifstream lockfile = getfile();
