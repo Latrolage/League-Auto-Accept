@@ -41,26 +41,26 @@ std::ifstream getfile(leagueDBfind& database) { //Get credentials from lockfile
 #else
     std::ifstream lockfile;
     if (database.getlocklocation() != "0") { //if the lockfile is already set to something, then it doesn't need to be found again
-        lockfile.clear(std::ifstream::eofbit);
-        return std::ifstream(database.getlocklocation());
+        lockfile.open(database.getlocklocation());
+    } else {
+        int errcode = database.open();
+        if (errcode) std::cerr << "couldn't open database to find league of legends install location\n"; //if the database wasn't opened properly
+        errcode = database.getinstalllocation();
+        if (errcode) std::cerr << "couldn't find install location errorcode: " << errcode << '\n';
+        lockfile.open(database.getlocklocation());
     }
-    int errcode = database.open();
-    if (errcode) std::cerr << "couldn't open database to find league of legends install location\n"; //if the database wasn't opened properly
-    errcode = database.getinstalllocation();
-    if (errcode) std::cerr << "couldn't find install location errorcode: " << errcode << '\n';
-    lockfile.open(database.getlocklocation());
-#endif
     while (!lockfile.is_open()) { // if it didn't get anything, something went wrong. Retry until process is killed
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         std::cout << "League isn't open yet or something else went wrong. Retrying..." << std::endl;
         lockfile.clear(std::ifstream::eofbit);
         lockfile.open(database.getlocklocation());
-        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
+#endif
     return lockfile;
 }
 
 
-std::vector<std::string> getdata(std::ifstream &lockfile) {
+std::vector<std::string> getdata(std::ifstream &lockfile) { //parses the lockfile for the portnum and password (which is in base64 in the lockfile)
     std::vector<std::string> svec;
     std::string portnum("");
     std::string pass("riot:");

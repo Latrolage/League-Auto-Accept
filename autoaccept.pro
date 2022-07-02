@@ -5,7 +5,7 @@
 QT += widgets
 
 TEMPLATE = app
-TARGET = tasktray
+TARGET = autoaccept
 INCLUDEPATH += .
 LIBS += -lcurl -lsqlite3
 
