@@ -11,3 +11,8 @@ Make sure you are using wine version lutris-ge-lol-7.0.2 otherwise your client w
 The program tries to set `abi.vsyscall32=0` to appease the league anticheat by default. You can tell it not to by using the `--nopkexec` as the first argument. i.e. 
 
 `autoaccept --nopkexec`
+
+
+
+
+Autoaccept isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
