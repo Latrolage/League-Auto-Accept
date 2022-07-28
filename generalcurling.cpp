@@ -14,12 +14,12 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
         if (methodtype == "GET")
             chatmedata += ptr[i];
         else {
-            std::cout << ptr[i];
+            //std::cout << ptr[i];
         }
     }
     return 0;
 }
-void curlstuff(const std::string& port, const std::string& pass,const std::string location, const std::string method, std::string* postdata) {
+void curlstuff(const std::string& port, const std::string& pass,const std::string location, const std::string method, const short status, std::string* postdata) {
     methodtype = method;
     //CURLcode ret; //unused
     CURL* curl;
@@ -39,16 +39,26 @@ void curlstuff(const std::string& port, const std::string& pass,const std::strin
     if (method == "GET") {
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
     } else if (method == "PUT") {
-        if (chatmedata.find("offline") != std::string::npos) {
-            std::cout << "Skip fakeoffline, (already offline)\n";
-            return;
-        }
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
         slist1 = curl_slist_append(slist1, "Content-Type: application/json");
-        chatmedata = std::regex_replace(chatmedata, std::regex("(.*)\"availability\":\".*?\"(.*)"), "$01\"availability\":\"offline\"$02");
+        switch (status) {
+            case ONLINE:
+            if (chatmedata.find(":\"online") != std::string::npos) {
+                std::cout << "Already online";
+                return;
+            }
+            chatmedata = std::regex_replace(chatmedata, std::regex("(.*)\"availability\":\".*?\"(.*)"), "$01\"availability\":\"online\"$02");
+            break;
+
+        case OFFLINE:
+            if (chatmedata.find("offline") != std::string::npos) {
+                std::cout << "Skip fakeoffline, (already offline)\n";
+                return;
+            }
+            chatmedata = std::regex_replace(chatmedata, std::regex("(.*)\"availability\":\".*?\"(.*)"), "$01\"availability\":\"offline\"$02");
+            break;
+        }
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, chatmedata.c_str());
-        //        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, chatmedata.c_str());
-        //        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE_LARGE, (curl_off_t)933);
     }
     else {
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");

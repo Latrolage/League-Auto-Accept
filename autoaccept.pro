@@ -3,7 +3,7 @@
 ######################################################################
 
 QT += widgets
-
+CONFIG += c++11
 TEMPLATE = app
 TARGET = autoaccept
 INCLUDEPATH += .
@@ -27,6 +27,7 @@ RESOURCES += a.qrc
 
 HEADERS += \
     base64.h \
+    enums.h \
     generalcurling.h \
     leaguefiles.h \
     menuclickedactions.h

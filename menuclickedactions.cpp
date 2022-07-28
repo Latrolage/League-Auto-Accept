@@ -31,18 +31,30 @@ void menuClickedActions::acceptloop() {
     }
     return;
 }
-void menuClickedActions::offline(bool checked) {
-    checked ? (bools |= (0b1<<1)) : (bools &= ~(0b1<<1));
-    if (bools & (0b1 << 1)) {
-        std::thread offlineThread(&menuClickedActions::offlineloop, this);
-        offlineThread.detach();
+void menuClickedActions::statusChange(bool checked, short newStatus) {
+    if (newStatus==0b11111111) {
+        checked &= newStatus;
+        curlstuff(database.theportnum(), database.thepassword(), "/lol-chat/v1/me", "PUT", ONLINE);
+        return;
     }
+    checked ? (bools |= (0b1<<STATUSCHANGE)) : (bools &= ~(0b1<<STATUSCHANGE));
+    if (checked) {
+        bools = (0b1 << newStatus) | (bools & 0b1);
+    }
+    std::thread statusChangeLoop(&menuClickedActions::statusloop, this, newStatus);
+    statusChangeLoop.detach();
 }
-void menuClickedActions::offlineloop() {
-    while (bools & (0b1 << 1)) {
+void menuClickedActions::statusloop(short newStatus) {
+    while (bools & (0b1 << newStatus)) {
         curlstuff(database.theportnum(), database.thepassword(), "/lol-chat/v1/me", "GET"); //data[0]=portnum,data[1]=password
-        curlstuff(database.theportnum(), database.thepassword(), "/lol-chat/v1/me", "PUT"); //data[0]=portnum,data[1]=password
+        switch (newStatus) {
+        case ONLINE:
+            curlstuff(database.theportnum(), database.thepassword(), "/lol-chat/v1/me", "PUT", ONLINE);
+            break;
+        case OFFLINE:
+            curlstuff(database.theportnum(), database.thepassword(), "/lol-chat/v1/me", "PUT", OFFLINE);
+            break;
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(1500));
     }
-    return;
 }

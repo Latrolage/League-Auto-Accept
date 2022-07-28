@@ -9,6 +9,7 @@
 #include <bitset>
 
 #include "leaguefiles.h"
+#include "enums.h"
 #include "base64.h"
 #include "generalcurling.h"
 
@@ -19,11 +20,11 @@ class menuClickedActions : public QObject
     unsigned short bools;
     void authentication();
     void acceptloop();
-    void offlineloop();
+    void statusloop(short);
 signals:
 public slots:
         void accept(bool);
-        void offline(bool);
+        void statusChange(bool, short);
 public:
         menuClickedActions();
 };

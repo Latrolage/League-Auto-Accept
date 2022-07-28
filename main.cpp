@@ -5,7 +5,16 @@
 #include <QtGui/QIcon>
 #include <QtWidgets/QSystemTrayIcon>
 #include <QtWidgets/QMenu>
+#include <QActionGroup>
 #include <QLoggingCategory>
+
+#include "enums.h"
+
+void addStatusActions(QAction *&action, QMenu &menu, QActionGroup &actionGroup) {
+    action->setCheckable(true);
+    actionGroup.addAction(action);
+    menu.addAction(action);
+}
 
 int main(int argc, char *argv[])
 {
@@ -16,26 +25,44 @@ int main(int argc, char *argv[])
 
   QMenu menu;
   QSystemTrayIcon TrayIcon(QIcon(":systemTrayIcon.png"));
+  auto menuClicked = new menuClickedActions();
 
   TrayIcon.show();
 
   QAction *autoacceptAction=new QAction("Autoaccept", NULL);
+  QObject::connect(autoacceptAction, SIGNAL(triggered(bool)), menuClicked, SLOT(accept(bool)));
   autoacceptAction->setCheckable(true);
-  QAction *offlineAction=new QAction("Offline", NULL);
-  offlineAction->setCheckable(true);
-  QAction *exitAction=new QAction("Exit", NULL);
-
   menu.addAction(autoacceptAction);
-  menu.addAction(offlineAction);
+  autoacceptAction->trigger();
+
+
+  QMenu statusButtonsMenu("Status");
+  QActionGroup statusActionGroup(nullptr);
+  menu.addMenu(&statusButtonsMenu);
+  statusActionGroup.setExclusive(true);
+  QAction *statusAction=new QAction("Online", NULL); // Online Status
+  QObject::connect(statusAction, &QAction::triggered, [&menuClicked] (bool checked) {
+                   menuClicked->statusChange(checked, ONLINE);
+  });
+  addStatusActions(statusAction, statusButtonsMenu, statusActionGroup);
+  statusAction=new QAction("Offline", NULL); // Offline Status
+  QObject::connect(statusAction, &QAction::triggered, [&menuClicked] (bool checked) {
+                   menuClicked->statusChange(checked, OFFLINE);
+  });
+  addStatusActions(statusAction, statusButtonsMenu, statusActionGroup);
+  statusAction=new QAction("None", NULL); // Don't try to force a status
+  addStatusActions(statusAction, statusButtonsMenu, statusActionGroup);
+  QObject::connect(statusAction, &QAction::triggered, [&menuClicked] (bool checked) {
+                   menuClicked->statusChange(checked, 0b11111111);
+  });
+//  QObject::connect(statusAction, SIGNAL(triggered(bool)), menuClicked, SLOT(statusChange(bool, 0b11111111)));
+  statusAction->trigger();
+
+  QAction *exitAction=new QAction("Exit", NULL);
   menu.addAction(exitAction);
+  QObject::connect(exitAction, SIGNAL(triggered()), &oApp, SLOT(quit()));
 
   TrayIcon.setContextMenu(&menu);
-  auto menuClicked = new menuClickedActions();
 
-  QObject::connect(autoacceptAction, SIGNAL(triggered(bool)), menuClicked, SLOT(accept(bool)));
-  autoacceptAction->trigger();
-  QObject::connect(offlineAction, SIGNAL(triggered(bool)), menuClicked, SLOT(offline(bool)));
-  //offlineAction->trigger();
-  QObject::connect(exitAction, SIGNAL(triggered()), &oApp, SLOT(quit()));
   return oApp.exec();
 }
