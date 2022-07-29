@@ -5,7 +5,7 @@ Made to be used with the lutris script https://lutris.net/games/league-of-legend
 
 Set this program as the prelaunch script in lutris and it should do its thing fine (right click league of legends->configure->system options->pre-launch script near bottom of options list). 
 
-Make sure you are using at least wine version ge lol 7.0.2 otherwise your client won't start.
+Make sure you are using at least wine version ge lol 7.0.3 otherwise your client might fail to start.
 
 
 
