@@ -1,4 +1,5 @@
 #include "menuclickedactions.h"
+#include "enums.h"
 
 #include <QtWidgets/QApplication>
 #include <QtCore/QDebug>
@@ -7,8 +8,6 @@
 #include <QtWidgets/QMenu>
 #include <QActionGroup>
 #include <QLoggingCategory>
-
-#include "enums.h"
 
 void addStatusActions(QAction *&action, QMenu &menu, QActionGroup &actionGroup) {
     action->setCheckable(true);
@@ -53,9 +52,9 @@ int main(int argc, char *argv[])
   statusAction=new QAction("None", NULL); // Don't try to force a status
   addStatusActions(statusAction, statusButtonsMenu, statusActionGroup);
   QObject::connect(statusAction, &QAction::triggered, [&menuClicked] (bool checked) {
-                   menuClicked->statusChange(checked, 0b11111111);
+                   menuClicked->statusChange(checked, NONE);
   });
-//  QObject::connect(statusAction, SIGNAL(triggered(bool)), menuClicked, SLOT(statusChange(bool, 0b11111111)));
+//  QObject::connect(statusAction, SIGNAL(triggered(bool)), menuClicked, SLOT(statusChange(bool, NONE)));
   statusAction->trigger();
 
   QAction *exitAction=new QAction("Exit", NULL);

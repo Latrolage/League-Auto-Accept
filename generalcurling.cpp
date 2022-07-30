@@ -17,6 +17,7 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
             //std::cout << ptr[i];
         }
     }
+    //std::cout << std::endl;
     return 0;
 }
 void curlstuff(const std::string& port, const std::string& pass,const std::string location, const std::string method, const short status, std::string* postdata) {
@@ -71,7 +72,6 @@ void curlstuff(const std::string& port, const std::string& pass,const std::strin
     curl=NULL;
     curl_slist_free_all(slist1);
     slist1=NULL;
-    std::cout << std::endl;
 }
 
 #endif

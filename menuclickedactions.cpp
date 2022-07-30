@@ -6,14 +6,17 @@ menuClickedActions::menuClickedActions() : bools(0) {
 };
 
 void menuClickedActions::authentication() {
+    std::string currentPass;
     while(true) {
         std::ifstream lockfile = getfile(database);
         std::vector<std::string> data(getdata(lockfile));
         database.setportnum(data[0]);
-        std::string tmp = Base64::Encode(data[1]);
         database.setpassword(Base64::Encode(data[1]));
-        std::cout << "Port number: " << database.theportnum() << '\n' << "Auth: " << database.thepassword() << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        if (database.thepassword() != currentPass) {
+            currentPass = database.thepassword();
+            std::cout << "Port number: " << database.theportnum() << '\n' << "Auth: " << database.thepassword() << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 }
 
@@ -32,8 +35,8 @@ void menuClickedActions::acceptloop() {
     return;
 }
 void menuClickedActions::statusChange(bool checked, short newStatus) {
-    if (newStatus==0b11111111) {
-        checked &= newStatus;
+    if (newStatus==NONE) {
+        bools &= 0b1;
         curlstuff(database.theportnum(), database.thepassword(), "/lol-chat/v1/me", "PUT", ONLINE);
         return;
     }
