@@ -9,7 +9,7 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     for (int i(0); i != nmemb; ++i) {
         std::cout << ptr[i];
     }
-    return 0;
+    return size * nmemb;
 }
 void curlstuff(const std::string& port, const std::string& pass) { 
 //    CURLcode ret; // unused

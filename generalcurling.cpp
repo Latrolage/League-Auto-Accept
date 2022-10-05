@@ -6,6 +6,7 @@
 #include <sstream>
 #include <regex>
 #include "generalcurling.h"
+
 std::string chatmedata="", methodtype;
 size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     if (methodtype == "GET") chatmedata = "";
@@ -20,7 +21,7 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     //std::cout << std::endl;
     return 0;
 }
-void curlstuff(const std::string& port, const std::string& pass,const std::string location, const std::string method, const short status, std::string* postdata) {
+void curlstuff(const std::string& port, const std::string& pass, const std::string& location, const std::string method, const short status, std::string* postdata) {
     methodtype = method;
     //CURLcode ret; //unused
     CURL* curl;
@@ -48,7 +49,7 @@ void curlstuff(const std::string& port, const std::string& pass,const std::strin
                 std::cout << "Already online";
                 return;
             }
-            chatmedata = std::regex_replace(chatmedata, std::regex("(.*)\"availability\":\".*?\"(.*)"), "$01\"availability\":\"online\"$02");
+            chatmedata = std::regex_replace(chatmedata, std::regex("(.*)\"availability\":\".*?\"(.*)"), "$01\"availability\":\"chat\"$02");
             break;
 
         case OFFLINE:

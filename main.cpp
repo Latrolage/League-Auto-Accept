@@ -14,10 +14,8 @@ void addStatusActions(QAction *&action, QMenu &menu, QActionGroup &actionGroup) 
     actionGroup.addAction(action);
     menu.addAction(action);
 }
-
 int main(int argc, char *argv[])
 {
-  if (argc != 1 && static_cast<std::string>(argv[1]) != "--nopkexec") system("pkexec sh -c 'sysctl -w abi.vsyscall32=0' > /dev/null");
   //qputenv("QT_ASSUME_STDERR_HAS_CONSOLE","1");
   QApplication oApp( argc, argv );
   //QLoggingCategory::setFilterRules("*.debug=true");
@@ -28,36 +26,40 @@ int main(int argc, char *argv[])
 
   TrayIcon.show();
 
-  QAction *autoacceptAction=new QAction("Autoaccept", NULL);
+  QAction *autoacceptAction=new QAction("Autoaccept", &menu);
   QObject::connect(autoacceptAction, SIGNAL(triggered(bool)), menuClicked, SLOT(accept(bool)));
   autoacceptAction->setCheckable(true);
   menu.addAction(autoacceptAction);
   autoacceptAction->trigger();
 
 
-  QMenu statusButtonsMenu("Status");
+  //QMenu *statusButtonsMenu = QMenu::addMenu("Status", &menu);
+  QMenu statusButtonsMenu("Status", &menu);
   QActionGroup statusActionGroup(nullptr);
   menu.addMenu(&statusButtonsMenu);
   statusActionGroup.setExclusive(true);
-  QAction *statusAction=new QAction("Online", NULL); // Online Status
+  QAction *statusAction=new QAction("Online", &statusButtonsMenu); // Online Status
   QObject::connect(statusAction, &QAction::triggered, [&menuClicked] (bool checked) {
                    menuClicked->statusChange(checked, ONLINE);
   });
   addStatusActions(statusAction, statusButtonsMenu, statusActionGroup);
-  statusAction=new QAction("Offline", NULL); // Offline Status
+  statusAction=new QAction("Offline", &statusButtonsMenu); // Offline Status
   QObject::connect(statusAction, &QAction::triggered, [&menuClicked] (bool checked) {
                    menuClicked->statusChange(checked, OFFLINE);
   });
   addStatusActions(statusAction, statusButtonsMenu, statusActionGroup);
-  statusAction=new QAction("None", NULL); // Don't try to force a status
+  statusAction=new QAction("None", &statusButtonsMenu); // Don't try to force a status
   addStatusActions(statusAction, statusButtonsMenu, statusActionGroup);
   QObject::connect(statusAction, &QAction::triggered, [&menuClicked] (bool checked) {
                    menuClicked->statusChange(checked, NONE);
   });
 //  QObject::connect(statusAction, SIGNAL(triggered(bool)), menuClicked, SLOT(statusChange(bool, NONE)));
   statusAction->trigger();
+  QObject::connect(&TrayIcon, &QSystemTrayIcon::activated, [&menu] (QSystemTrayIcon::ActivationReason r) {
+                   if (r==QSystemTrayIcon::ActivationReason::Trigger) menu.popup(QCursor::pos());
+  });
 
-  QAction *exitAction=new QAction("Exit", NULL);
+  QAction *exitAction=new QAction("Exit", &menu);
   menu.addAction(exitAction);
   QObject::connect(exitAction, SIGNAL(triggered()), &oApp, SLOT(quit()));
 
