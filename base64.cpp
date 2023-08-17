@@ -24,6 +24,7 @@
  */
 
 #include "base64.h"
+#include <cstdint>
 
 std::string Base64::Encode(const std::string data) {
     static constexpr char sEncodingTable[] = {

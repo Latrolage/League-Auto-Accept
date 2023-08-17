@@ -1,10 +1,20 @@
 #ifndef GENERALCURLING_H
 #define GENERALCURLING_H
-#include <string>
-#include <QtCore/QDebug>
+#pragma once
+#include <QObject>
+#include <QNetworkReply>
 
-#include "enums.h"
+#include <enums.h>
 
-size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
-void curlstuff(const std::string& port, const std::string& pass, const std::string& location, const std::string method, const short status=0, std::string* postdata = nullptr);
+class qurling : public QObject {
+    Q_OBJECT
+public slots:
+    void finishedqurling();
+public:
+    qurling(QObject *parent = nullptr) : QObject(parent){};
+    void qurlstuff(const std::string& port, const std::string& pass, const std::string& location, const std::string method, const short status=0, std::string* postdata = nullptr);
+};
+
+void qwrite_callback(const std::string &str, const std::string methodtype);
+void curlstuff(const std::string& port, const std::string& pass, const std::string& location, const std::string method, const short status, std::string* postdata);
 #endif // GENERALCURLING_H

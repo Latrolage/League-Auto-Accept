@@ -33,7 +33,6 @@ int main(int argc, char *argv[])
   autoacceptAction->trigger();
 
 
-  //QMenu *statusButtonsMenu = QMenu::addMenu("Status", &menu);
   QMenu statusButtonsMenu("Status", &menu);
   QActionGroup statusActionGroup(nullptr);
   menu.addMenu(&statusButtonsMenu);
@@ -53,7 +52,6 @@ int main(int argc, char *argv[])
   QObject::connect(statusAction, &QAction::triggered, [&menuClicked] (bool checked) {
                    menuClicked->statusChange(checked, NONE);
   });
-//  QObject::connect(statusAction, SIGNAL(triggered(bool)), menuClicked, SLOT(statusChange(bool, NONE)));
   statusAction->trigger();
   QObject::connect(&TrayIcon, &QSystemTrayIcon::activated, [&menu] (QSystemTrayIcon::ActivationReason r) {
                    if (r==QSystemTrayIcon::ActivationReason::Trigger) menu.popup(QCursor::pos());
