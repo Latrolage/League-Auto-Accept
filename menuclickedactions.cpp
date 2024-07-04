@@ -1,4 +1,5 @@
 #include "menuclickedactions.h"
+#include <QString>
 
 menuClickedActions::menuClickedActions() : bools(0) {
      std::thread authvariables(&menuClickedActions::authentication, this);
@@ -11,7 +12,8 @@ void menuClickedActions::authentication() {
         std::ifstream lockfile = getfile(database);
         std::vector<std::string> data(getdata(lockfile));
         database.setportnum(data[0]);
-        database.setpassword(Base64::Encode(data[1]));
+        database.setpassword(QString::fromStdString(data[1]).toUtf8().toBase64().toStdString());
+                std::cout << "4" << std::endl;
         if (database.thepassword() != currentPass) {
             currentPass = database.thepassword();
             std::cout << "Port number: " << database.theportnum() << '\n' << "Auth: " << database.thepassword() << std::endl;

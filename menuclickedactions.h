@@ -10,7 +10,6 @@
 
 #include "leaguefiles.h"
 #include "enums.h"
-#include "base64.h"
 #include "generalcurling.h"
 
 class menuClickedActions : public QObject

@@ -1,3 +1,4 @@
+#include <QtSystemDetection>
 #include "leaguefiles.h"
 #include <sqlite3.h>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include <chrono>
 
 leagueDBfind::leagueDBfind() : lockfile("0"),portnum("0"),password("0") { // constructor tries to find the location of the lutris database with the XDG_DATA_HOME environmental variable. If it doesn't, it gets set to ~/.local/share/lutris/pga.db
+#ifdef Q_OS_LINUX
     char* env = std::getenv("XDG_DATA_HOME");
     XDG_DATA_HOME = env ? env : "";
 
@@ -15,6 +17,9 @@ leagueDBfind::leagueDBfind() : lockfile("0"),portnum("0"),password("0") { // con
         XDG_DATA_HOME=static_cast<std::string>(std::getenv("HOME"))+"/.local/share";
     }
     databaselocation = XDG_DATA_HOME+"/lutris/pga.db";
+#else
+    std::cout << "made leagueDBfind object\n" << std::endl;
+#endif
 }
 int leagueDBfind::open() { //give sqlite3 object the location of the lutris database
     return sqlite3_open(databaselocation.c_str(), &database);
@@ -36,9 +41,10 @@ void leagueDBfind::setportnum(const std::string& port) { portnum=port; }
 
 
 std::ifstream getfile(leagueDBfind& database) { //Get credentials from lockfile
-#ifdef _WIN32  // i haven't tried this program with windows at all. I wanted to but I don't know how to cross compile for windows
+#ifdef Q_OS_WIN32  // i haven't tried this program with windows at all. I wanted to but I don't know how to cross compile for windows
     std::ifstream lockfile("C:\\Riot Games\\League of Legends\\lockfile");
-#else
+#endif
+#ifdef Q_OS_LINUX
     std::ifstream lockfile;
     if (database.getlocklocation() != "0") { //if the lockfile is already set to something, then it doesn't need to be found again
         lockfile.open(database.getlocklocation());
@@ -55,6 +61,14 @@ std::ifstream getfile(leagueDBfind& database) { //Get credentials from lockfile
         lockfile.clear(std::ifstream::eofbit);
         lockfile.open(database.getlocklocation());
     }
+#endif
+#ifdef Q_OS_MACOS
+    const std::string lockpath = "/Applications/League of Legends.app/Contents/LoL/lockfile";
+    while (!std::filesystem::exists(lockpath)) {
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "Couldn't find lockfile, is league open? Does /Applications/League of Legends.app/Contents/LoL/lockfile exist?" << std::endl;
+    }
+    std::ifstream lockfile(lockpath);
 #endif
     return lockfile;
 }

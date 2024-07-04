@@ -16,5 +16,5 @@ public:
 };
 
 void qwrite_callback(const std::string &str, const std::string methodtype);
-void curlstuff(const std::string& port, const std::string& pass, const std::string& location, const std::string method, const short status, std::string* postdata);
+void curlstuff(const std::string& port, const std::string& pass, const std::string& location, const std::string method, const short status = 0, std::string* postdata = nullptr);
 #endif // GENERALCURLING_H

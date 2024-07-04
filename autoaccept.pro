@@ -18,7 +18,6 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 # Input
 SOURCES += \
-    base64.cpp \
     generalcurling.cpp \
     leaguefiles.cpp \
     main.cpp \
@@ -26,8 +25,9 @@ SOURCES += \
 RESOURCES += a.qrc
 
 HEADERS += \
-    base64.h \
     enums.h \
     generalcurling.h \
     leaguefiles.h \
     menuclickedactions.h
+
+DISTFILES +=

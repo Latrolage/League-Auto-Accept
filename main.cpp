@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
   //qputenv("QT_ASSUME_STDERR_HAS_CONSOLE","1");
   QApplication oApp( argc, argv );
   //QLoggingCategory::setFilterRules("*.debug=true");
-
   QMenu menu;
   QSystemTrayIcon TrayIcon(QIcon(":systemTrayIcon.png"));
   auto menuClicked = new menuClickedActions();
